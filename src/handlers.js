@@ -5,6 +5,9 @@ const skygearCloud = require('skygear/cloud');
 const _ = require('lodash');
 const { IncomingWebhook } = require('@slack/client');
 
+const { getContainer } = require('./util');
+const { botConfig } = require('./config');
+
 function webhookOrNull(slackUrl) {
   if (slackUrl === undefined || slackUrl === null || slackUrl === '') {
     return null;
