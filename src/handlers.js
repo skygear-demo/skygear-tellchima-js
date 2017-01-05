@@ -23,18 +23,24 @@ function showHelp() {
     console.log('in showHelp');
   }
   const commands = [
-    'help - chima help'
+    '/tellchima - tell chima',
+    '/untellchima',
+    '/schedulechima',
+    '/tellskygear',
+    '/untellskygear'
   ];
   return {
     text: commands.join('\n')
   };
 }
 
-skygearCloud.handler('/slash-command', function (req) {
-  if (botConfig.debugMode) {
-    console.log('in slash-command handler');
-  }
 
+function handleCommand(command, text, responseURL) {
+
+  return {text: text};
+}
+
+function slashCommandPromise(req) {
   return new Promise((resolve, reject) => {
     req.form(function (formError, fields) {
       if (formError !== undefined && formError !== null) {
@@ -43,7 +49,10 @@ skygearCloud.handler('/slash-command', function (req) {
       }
 
       if (botConfig.debugMode) {
-        console.log('Received slash command with fields', fields);
+        // console.log('Received slash command with fields', fields);
+        console.log(fields.command);
+        console.log(fields.text);
+        console.log(fields.response_url);
       }
 
       if (fields.token !== botConfig.slackSlashCommandToken) {
@@ -52,7 +61,18 @@ skygearCloud.handler('/slash-command', function (req) {
         return;
       }
 
-      resolve({ text: 'Yeah' });
+      return handleCommand(
+        fields.command,
+        fields.text,
+        fields.response_url);
     });
   });
+}
+
+skygearCloud.handler('/slash-command', function (req) {
+  if (botConfig.debugMode) {
+    console.log('in slash-command handler');
+  }
+
+  return slashCommandPromise(req);
 });
