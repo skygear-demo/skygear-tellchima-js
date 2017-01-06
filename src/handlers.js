@@ -8,6 +8,9 @@ const { IncomingWebhook } = require('@slack/client');
 const { getContainer } = require('./util');
 const { botConfig } = require('./config');
 
+/**
+ * Returns a slack IncomingWebhook. Return null if the slack URL is not valid.
+ */
 function webhookOrNull(slackUrl) {
   if (slackUrl === undefined || slackUrl === null || slackUrl === '') {
     return null;
@@ -39,6 +42,8 @@ function handleCommand(command, text, responseURL) {
   if (botConfig.debugMode) {
     console.log('in handleCommand');
   }
+  let responseWebhook = webhookOrNull(fields.response_url);
+  responseWebhook.send({text: 'zZZz'});
   return {text: text};
 }
 
@@ -50,13 +55,13 @@ function slashCommandPromise(req) {
         return;
       }
 
-      if(!'command' in fields || 
-        !'token' in fields ||
-        !'text' in fields ||
-        !'response_url' in fields
+      if (!('command' in fields) ||
+        !('token' in fields) ||
+        !('text' in fields) ||
+        !('response_url' in fields)
         ) {
-          reject({error: 'missing some fields'});
-          return;
+        reject({error: 'missing some fields'});
+        return;
       }
 
       if (botConfig.debugMode) {
@@ -87,6 +92,6 @@ skygearCloud.handler('/slash-command', function (req) {
   }
 
   return slashCommandPromise(req);
-},{
-    method: ['POST'],
+}, {
+  method: ['POST']
 });
