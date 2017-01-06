@@ -62,6 +62,7 @@ function slashCommandPromise(req) {
         return;
       }
 
+      resolve({text: 'loading'});
       return handleCommand(
         fields.command,
         fields.text,
