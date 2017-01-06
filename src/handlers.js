@@ -44,10 +44,6 @@ function handleCommand(command, text, responseURL) {
 
 function slashCommandPromise(req) {
   return new Promise((resolve, reject) => {
-    if (!req) {
-      reject({error: 'no req'});
-    }
-
     req.form(function (formError, fields) {
       if (formError !== undefined && formError !== null) {
         reject({error: formError});
@@ -91,4 +87,6 @@ skygearCloud.handler('/slash-command', function (req) {
   }
 
   return slashCommandPromise(req);
+},{
+    method: ['POST'],
 });
