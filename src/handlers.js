@@ -50,6 +50,15 @@ function slashCommandPromise(req) {
         return;
       }
 
+      if(!'command' in fields || 
+        !'token' in fields ||
+        !'text' in fields ||
+        !'response_url' in fields
+        ) {
+          reject({error: 'missing some fields'});
+          return;
+      }
+
       if (botConfig.debugMode) {
         // console.log('Received slash command with fields', fields);
         console.log(fields.command);
