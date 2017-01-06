@@ -42,7 +42,7 @@ function handleCommand(command, text, responseURL) {
   if (botConfig.debugMode) {
     console.log('in handleCommand');
   }
-  let responseWebhook = webhookOrNull(fields.response_url);
+  let responseWebhook = webhookOrNull(responseURL);
   responseWebhook.send({text: 'zZZz'});
   return {text: text};
 }
