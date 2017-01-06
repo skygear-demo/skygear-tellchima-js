@@ -36,9 +36,10 @@ function showHelp() {
 
 
 function handleCommand(command, text, responseURL) {
+  if (botConfig.debugMode) {
+    console.log('in handleCommand');
+  }
   return {text: text};
-  //return {text: text};
-
 }
 
 function slashCommandPromise(req) {
