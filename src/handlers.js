@@ -36,7 +36,7 @@ function showHelp() {
 
 
 function handleCommand(command, text, responseURL) {
-  resolve({text: text});
+  return {text: text};
   //return {text: text};
 
 }
