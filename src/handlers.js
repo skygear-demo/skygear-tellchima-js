@@ -27,10 +27,10 @@ function showHelp() {
   }
   const commands = [
     '/tellchima - tell chima',
-    '/untellchima',
-    '/schedulechima',
-    '/tellskygear',
-    '/untellskygear'
+    '/untellchima - untell chima',
+    '/schedulechima - schedule a chima post',
+    '/tellskygear - tellchima skygear version',
+    '/untellskygear - untell a skygear post'
   ];
   return {
     text: commands.join('\n')
@@ -42,6 +42,26 @@ function handleCommand(command, text, responseURL) {
   if (botConfig.debugMode) {
     console.log('in handleCommand');
   }
+
+  if (command === '/tellchima') {
+
+  } else if (command === '/untellchima'){
+
+  } else if (command === '/2tellchima'){
+    responseWebhook.send({text: 'tellchima'});
+  } else if (command === '/schedulechima'){
+
+  } else if (command === '/tellskygear'){
+
+  } else if (command === '/untellskygear'){
+
+  } else if (command === '/listchima'){
+
+  } else {
+    console.log('No such command');
+    return {text: 'No such command'};
+  }
+
   let responseWebhook = webhookOrNull(responseURL);
   responseWebhook.send({text: 'zZZz'});
   return {text: text};
@@ -77,7 +97,7 @@ function slashCommandPromise(req) {
         return;
       }
 
-      resolve({text: 'loading'});
+      resolve({text: ''});
       return handleCommand(
         fields.command,
         fields.text,
