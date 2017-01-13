@@ -53,17 +53,19 @@ function tellChima(text, responseURL) {
 
   let container = getContainer(botConfig.defaultUserId);
   var record = new ChimaRecord({
-    'content': text,
-    'secret': sha256(secret)
-  })
+    content: text,
+    secret: sha256(secret)
+  });
 
-  container.publicDB.save(record).then((record) => {
-    console.log(record);
-    //('Meow. Received!\nPreview: `#'+issueNo+'` '+text+"\n P.S. You can remove this post with `/untellchima #"+issueNo+"`");
-    responseWebhook.send({text: 'tellchima done'});
+  container.publicDB.save(record).then((result) => {
+    var issueNo = 1;
+    var replyText = 'Meow. Received!\nPreview: `#' + issueNo + '` ' +
+        text + '\n P.S. You can remove this post with `/untellchima #' +
+        issueNo + ' ' + secret + '`';
+    responseWebhook.send({text: replyText});
   }, (error) => {
     console.error(error);
-    responseWebhook.send({text: 'tellchima failed'});
+    responseWebhook.send({text: 'Failed to tell chima.'});
   });
 }
 
