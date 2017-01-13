@@ -2,8 +2,20 @@
 
 const skygearCloud = require('skygear/cloud');
 
-function generatePassword() {
+function generateUserPassword() {
   return Math.random().toString(36).substr(2);
+}
+
+function generateChimaSecret() {
+  var len = 8,
+    str = '';
+  for (var i = 0; i < len; i++ ) {
+    str += String.fromCharCode( 65 + ~~(Math.random() * 25) );
+  }
+  return str
+}
+
+console.log( str );
 }
 
 function getContainer(userId) {
@@ -14,12 +26,8 @@ function getContainer(userId) {
   return container;
 }
 
-function getDefaultUserID() {
-  return '123';
-}
-
 function createUser(userName) {
-  return getContainer().signupWithUsername(userName, generatePassword())
+  return getContainer().signupWithUsername(userName, generateUserPassword())
     .then((user) => {
       console.info(`Created user "${user.id}" for "${userName}".`);
       return {
@@ -34,5 +42,5 @@ function createUser(userName) {
 
 module.exports = {
   getContainer,
-  createUser
+  generateChimaSecret 
 };

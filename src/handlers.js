@@ -3,9 +3,10 @@
 const skygear = require('skygear');
 const skygearCloud = require('skygear/cloud');
 const _ = require('lodash');
+const sha256 = require('sha256');
 const { IncomingWebhook } = require('@slack/client');
 
-const { getContainer, createUser } = require('./util');
+const { getContainer, generateChimaSecret } = require('./util');
 const { botConfig } = require('./config');
 
 /**
@@ -37,19 +38,28 @@ function showHelp() {
   };
 }
 
-
 function tellChima(text, responseURL) {
-
   // Create a new Chima record
   const ChimaRecord = skygear.Record.extend('chima_record');
   let responseWebhook = webhookOrNull(responseURL);
 
+  let message = text;
+  if (message.length === 0) {
+    responseWebhook.send({text: 'No message text.'});
+    return;
+  }
+
+  let secret = generateChimaSecret();
+
   let container = getContainer(botConfig.defaultUserId);
-  
-  container.publicDB.save(new ChimaRecord({
-    'content': 'Hello World!'
-  })).then((record) => {
+  var record = new ChimaRecord({
+    'content': text,
+    'secret': sha256(secret)
+  })
+
+  container.publicDB.save(record).then((record) => {
     console.log(record);
+    //('Meow. Received!\nPreview: `#'+issueNo+'` '+text+"\n P.S. You can remove this post with `/untellchima #"+issueNo+"`");
     responseWebhook.send({text: 'tellchima done'});
   }, (error) => {
     console.error(error);
@@ -92,7 +102,7 @@ function handleCommand(command, text, responseURL) {
     let responseWebhook = webhookOrNull(responseURL);
     return {text: 'No such command'};
   }
-  return {text: text};
+  return {text: 'Not yet implemented'};
 }
 
 function slashCommandPromise(req) {
@@ -125,7 +135,7 @@ function slashCommandPromise(req) {
         return;
       }
 
-      resolve({text: ''});
+      resolve({text: 'Connected.'});
       return handleCommand(
         fields.command,
         fields.text,
