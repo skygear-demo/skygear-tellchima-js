@@ -38,19 +38,36 @@ function showHelp() {
 }
 
 
-function handleCommand(command, text, responseURL) {
-  let responseWebhook = webhookOrNull(responseURL);
+function tellChima(text, responseURL) {
 
+  // Create a new Chima record
+
+  let responseWebhook = webhookOrNull(responseURL);
+  responseWebhook.send({text: 'tellchima'});
+}
+
+function untellChima(text, responseURL) {
+
+  // Match Chima record
+
+  // Check if possible to be deleted
+
+  // Mark as delete
+
+  let responseWebhook = webhookOrNull(responseURL);
+  responseWebhook.send({text: 'untellchima'});
+}
+
+
+function handleCommand(command, text, responseURL) {
   if (botConfig.debugMode) {
     console.log('in handleCommand');
   }
 
-  if (command === '/tellchima') {
-
+  if (command === '/tellchima' || command === '/2tellchima') {
+    tellChima(text, responseURL);
   } else if (command === '/untellchima') {
-
-  } else if (command === '/2tellchima') {
-    responseWebhook.send({text: 'tellchima'});
+    untellChima(text, responseURL);
   } else if (command === '/schedulechima') {
 
   } else if (command === '/tellskygear') {
@@ -61,10 +78,9 @@ function handleCommand(command, text, responseURL) {
 
   } else {
     console.log('No such command');
+    let responseWebhook = webhookOrNull(responseURL);
     return {text: 'No such command'};
   }
-
-  responseWebhook.send({text: 'zZZz'});
   return {text: text};
 }
 
@@ -115,4 +131,13 @@ skygearCloud.handler('/slash-command', function (req) {
   return slashCommandPromise(req);
 }, {
   method: ['POST']
+});
+
+skygearCloud.handler('/create-user', function (req) {
+  if (botConfig.debugMode) {
+    console.log('in create-user handler');
+  }
+  return createUser('admin');
+}, {
+  method: ['GET']
 });
