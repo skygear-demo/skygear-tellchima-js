@@ -5,7 +5,7 @@ const skygearCloud = require('skygear/cloud');
 const _ = require('lodash');
 const { IncomingWebhook } = require('@slack/client');
 
-const { getContainer } = require('./util');
+const { getContainer, createUser } = require('./util');
 const { botConfig } = require('./config');
 
 /**
