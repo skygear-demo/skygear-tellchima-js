@@ -41,9 +41,20 @@ function showHelp() {
 function tellChima(text, responseURL) {
 
   // Create a new Chima record
-
+  const ChimaRecord = skygear.Record.extend('chima_record');
   let responseWebhook = webhookOrNull(responseURL);
-  responseWebhook.send({text: 'tellchima'});
+
+  let container = getContainer(botConfig.defaultUserId);
+  
+  container.publicDB.save(new ChimaRecord({
+    'content': 'Hello World!'
+  })).then((record) => {
+    console.log(record);
+    responseWebhook.send({text: 'tellchima done'});
+  }, (error) => {
+    console.error(error);
+    responseWebhook.send({text: 'tellchima failed'});
+  });
 }
 
 function untellChima(text, responseURL) {
@@ -127,17 +138,8 @@ skygearCloud.handler('/slash-command', function (req) {
   if (botConfig.debugMode) {
     console.log('in slash-command handler');
   }
-
   return slashCommandPromise(req);
 }, {
   method: ['POST']
 });
 
-skygearCloud.handler('/create-user', function (req) {
-  if (botConfig.debugMode) {
-    console.log('in create-user handler');
-  }
-  return createUser('admin');
-}, {
-  method: ['GET']
-});
