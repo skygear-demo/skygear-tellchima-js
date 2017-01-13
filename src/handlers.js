@@ -39,30 +39,31 @@ function showHelp() {
 
 
 function handleCommand(command, text, responseURL) {
+  let responseWebhook = webhookOrNull(responseURL);
+
   if (botConfig.debugMode) {
     console.log('in handleCommand');
   }
 
   if (command === '/tellchima') {
 
-  } else if (command === '/untellchima'){
+  } else if (command === '/untellchima') {
 
-  } else if (command === '/2tellchima'){
+  } else if (command === '/2tellchima') {
     responseWebhook.send({text: 'tellchima'});
-  } else if (command === '/schedulechima'){
+  } else if (command === '/schedulechima') {
 
-  } else if (command === '/tellskygear'){
+  } else if (command === '/tellskygear') {
 
-  } else if (command === '/untellskygear'){
+  } else if (command === '/untellskygear') {
 
-  } else if (command === '/listchima'){
+  } else if (command === '/listchima') {
 
   } else {
     console.log('No such command');
     return {text: 'No such command'};
   }
 
-  let responseWebhook = webhookOrNull(responseURL);
   responseWebhook.send({text: 'zZZz'});
   return {text: text};
 }
