@@ -58,14 +58,15 @@ function tellChima(text, responseURL) {
     content: text,
     issueNo: issueNo,
     salt: salt,
-    secret: sha256(salt+secret)
+    secret: sha256(salt + secret)
   });
 
   container.publicDB.save(record).then((result) => {
-    var result;
-    var replyText = 'Meow. Received!\nPreview: `#' + issueNo + '` ' +
-        text + '\n P.S. You can remove this post with `/untellchima #' +
-        issueNo + ' ' + secret + '`';
+    let savedRecord = result
+
+    var replyText = 'Meow. Received!\nPreview: `#' + savedRecord.issueNo + '` ' +
+        savedRecord.text + '\n P.S. You can remove this post with `/untellchima #' +
+        savedRecord.issueNo + ' ' + savedRecord.secret + '`';
     responseWebhook.send({text: replyText});
   }, (error) => {
     console.error(error);
