@@ -6,7 +6,7 @@ const _ = require('lodash');
 const sha256 = require('sha256');
 const { IncomingWebhook } = require('@slack/client');
 
-const { getContainer, generateChimaSecret } = require('./util');
+const { getContainer, generateChimaSecret, generateChimaSalt } = require('./util');
 const { botConfig } = require('./config');
 
 /**
@@ -45,20 +45,24 @@ function tellChima(text, responseURL) {
 
   let message = text;
   if (message.length === 0) {
-    responseWebhook.send({text: 'No message text.'});
+    responseWebhook.send({text: 'There\'s no message text in your last command. You can tell chima like this: `/tellchima YOUR MESSAGE HERE`'});
     return;
   }
 
   let secret = generateChimaSecret();
+  let salt = generateChimaSalt();
 
   let container = getContainer(botConfig.defaultUserId);
+  var issueNo = new skygear.Sequence();
   var record = new ChimaRecord({
     content: text,
-    secret: sha256(secret)
+    issueNo: issueNo,
+    salt: salt,
+    secret: sha256(salt+secret)
   });
 
   container.publicDB.save(record).then((result) => {
-    var issueNo = 1;
+    var result;
     var replyText = 'Meow. Received!\nPreview: `#' + issueNo + '` ' +
         text + '\n P.S. You can remove this post with `/untellchima #' +
         issueNo + ' ' + secret + '`';

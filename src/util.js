@@ -9,8 +9,17 @@ function generateUserPassword() {
 function generateChimaSecret() {
   var len = 8,
     str = '';
-  for (var i = 0; i < len; i++ ) {
-    str += String.fromCharCode( 65 + ~~(Math.random() * 25) );
+  for (var i = 0; i < len; i++) {
+    str += String.fromCharCode(65 + ~~(Math.random() * 25));
+  }
+  return str;
+}
+
+function generateChimaSalt() {
+  var len = 8,
+    str = '';
+  for (var i = 0; i < len; i++) {
+    str += String.fromCharCode(65 + ~~(Math.random() * 25));
   }
   return str;
 }
@@ -39,5 +48,6 @@ function createUser(userName) {
 
 module.exports = {
   getContainer,
-  generateChimaSecret 
+  generateChimaSecret,
+  generateChimaSalt
 };
