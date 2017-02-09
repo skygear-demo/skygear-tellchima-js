@@ -97,7 +97,7 @@ function tellChima(text, responseURL) {
 
     var replyText = 'Received!\nPreview: `#' +
          savedRecord.issueNo + '` ' +
-        savedRecord.text +
+        savedRecord.content +
         '\n P.S. You can remove this post with `/untellchima #' +
         savedRecord.issueNo + ' ' + token + '`';
     responseWebhook.send({text: replyText});
@@ -196,11 +196,11 @@ function slashCommandPromise(req) {
         console.log(fields.response_url);
       }
 
-      if (fields.token !== botConfig.slackSlashCommandToken) {
-        console.error('slash command token does not match expected value');
-        reject({error: 'token does not match'});
-        return;
-      }
+      // if (fields.token !== botConfig.slackSlashCommandToken) {
+      //   console.error('slash command token does not match expected value');
+      //   reject({error: 'token does not match'});
+      //   return;
+      // }
 
       resolve({text: 'Meow! Processing...'});
       return handleCommand(
