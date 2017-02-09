@@ -112,8 +112,6 @@ function untellChima(text, responseURL) {
   let str = text;
   var regexp = /(#[0-9]+) (\S+)/gi;
 
-console.log(test)
-
   var matchesArray = regexp.exec(str);
 
   if (matchesArray && matchesArray.length > 0) {
@@ -135,7 +133,9 @@ function listChima(responseURL) {
   const query = new skygear.Query(ChimaRecord);
   query.greaterThan('_created_at', 10).notEqualTo('removed', true).addAscending('issueNo');
 
-  skygear.publicDB.query(query).then((records) => {
+  let container = getContainer(botConfig.defaultUserId);
+
+  container.publicDB.query(query).then((records) => {
     console.log(records[0]);
     let responseWebhook = webhookOrNull(responseURL);
     responseWebhook.send({text: replyText});
