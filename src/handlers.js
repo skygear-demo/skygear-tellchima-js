@@ -2,11 +2,13 @@
 
 const skygear = require('skygear');
 const skygearCloud = require('skygear/cloud');
-const _ = require('lodash');
+//const _ = require('lodash');
 const sha256 = require('sha256');
 const { IncomingWebhook } = require('@slack/client');
 
-const { getContainer, generateChimaSecret, generateChimaSalt } = require('./util');
+const { getContainer,
+        generateChimaSecret,
+        generateChimaSalt } = require('./util');
 const { botConfig } = require('./config');
 
 /**
@@ -38,6 +40,33 @@ function showHelp() {
   };
 }
 
+function cancelIssue(issueNo, proposedToken) {
+  // TODO: Match Chima record
+
+  var salt = 'Query from DB';
+  var secret = 'Query from DB';
+
+  // Check if possible to be deleted
+  let proposedSecret = sha256(salt + proposedToken);
+  if (proposedSecret === secret) {
+    // TODO: Mark as deleted
+
+    //set `removed` is true
+
+
+    let responseWebhook = webhookOrNull(responseURL);
+    responseWebhook.send({text: 'untellchima'});
+  } else {
+    // No, you can't remove this post.
+    let responseWebhook = webhookOrNull(responseURL);
+    responseWebhook.send({text: 'untellchima failed.'});
+  }
+}
+
+function scheduleIssue(text, date) {
+
+}
+
 function tellChima(text, responseURL) {
   // Create a new Chima record
   const ChimaRecord = skygear.Record.extend('chima_record');
@@ -45,11 +74,13 @@ function tellChima(text, responseURL) {
 
   let message = text;
   if (message.length === 0) {
-    responseWebhook.send({text: 'There\'s no message text in your last command. You can tell chima like this: `/tellchima YOUR MESSAGE HERE`'});
+    responseWebhook.send({
+      text: 'There\'s no message text in your last command. \
+      You can tell chima like this: `/tellchima <YOUR MESSAGE>`'});
     return;
   }
 
-  let secret = generateChimaSecret();
+  let token = generateChimaSecret();
   let salt = generateChimaSalt();
 
   let container = getContainer(botConfig.defaultUserId);
@@ -58,15 +89,17 @@ function tellChima(text, responseURL) {
     content: text,
     issueNo: issueNo,
     salt: salt,
-    secret: sha256(salt + secret)
+    secret: sha256(salt + token)
   });
 
   container.publicDB.save(record).then((result) => {
-    let savedRecord = result
+    let savedRecord = result;
 
-    var replyText = 'Meow. Received!\nPreview: `#' + savedRecord.issueNo + '` ' +
-        savedRecord.text + '\n P.S. You can remove this post with `/untellchima #' +
-        savedRecord.issueNo + ' ' + savedRecord.secret + '`';
+    var replyText = 'Received!\nPreview: `#' +
+         savedRecord.issueNo + '` ' +
+        savedRecord.text +
+        '\n P.S. You can remove this post with `/untellchima #' +
+        savedRecord.issueNo + ' ' + token + '`';
     responseWebhook.send({text: replyText});
   }, (error) => {
     console.error(error);
@@ -75,17 +108,43 @@ function tellChima(text, responseURL) {
 }
 
 function untellChima(text, responseURL) {
+  // Parse format
+  let str = text;
+  var regexp = /(#[0-9]+) (\S+)/gi;
 
-  // Match Chima record
+console.log(test)
 
-  // Check if possible to be deleted
+  var matchesArray = regexp.exec(str);
 
-  // Mark as delete
+  if (matchesArray && matchesArray.length > 0) {
+    var issueNumber = matchesArray[1];
+    var issueNo = parseInt(issueNumber.replace('#', ''));
 
-  let responseWebhook = webhookOrNull(responseURL);
-  responseWebhook.send({text: 'untellchima'});
+    var proposedToken = matchesArray[2];
+    cancelIssue(issueNo, proposedToken);
+
+  } else {
+    console.log('Error. Issue not specified');
+  }
 }
 
+function listChima(responseURL) {
+  var replyText = 'Chima Summary (`/tellchima` to add)';
+
+  const ChimaRecord = skygear.Record.extend('chima_record');
+  const query = new skygear.Query(ChimaRecord);
+  query.greaterThan('_created_at', 10).notEqualTo('removed', true).addAscending('issueNo');
+
+  skygear.publicDB.query(query).then((records) => {
+    console.log(records[0]);
+    let responseWebhook = webhookOrNull(responseURL);
+    responseWebhook.send({text: replyText});
+  }, (error) => {
+    console.log(error);
+    let responseWebhook = webhookOrNull(responseURL);
+    responseWebhook.send({text: "error."});
+  });
+}
 
 function handleCommand(command, text, responseURL) {
   if (botConfig.debugMode) {
@@ -94,21 +153,22 @@ function handleCommand(command, text, responseURL) {
 
   if (command === '/tellchima' || command === '/2tellchima') {
     tellChima(text, responseURL);
-  } else if (command === '/untellchima') {
+  } else if (command === '/untellchima' || command === '/2untellchima') {
     untellChima(text, responseURL);
-  } else if (command === '/schedulechima') {
-
+  } else if (command === '/schedulechima' || command === '/2schedulechima') {
+    console.log('schedulechima');
   } else if (command === '/tellskygear') {
-
+    console.log('tellskygear');
   } else if (command === '/untellskygear') {
-
-  } else if (command === '/listchima') {
-
+    console.log('untellskygear');
+  } else if (command === '/listchima' || command === '/2listchima') {
+    console.log('listchima');
+    listChima(responseURL);
   } else {
     console.log('No such command');
-    let responseWebhook = webhookOrNull(responseURL);
     return {text: 'No such command'};
   }
+
   return {text: 'Not yet implemented'};
 }
 
@@ -142,7 +202,7 @@ function slashCommandPromise(req) {
         return;
       }
 
-      resolve({text: 'Connected.'});
+      resolve({text: 'Meow! Processing...'});
       return handleCommand(
         fields.command,
         fields.text,
