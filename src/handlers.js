@@ -88,6 +88,7 @@ function tellChima(text, responseURL) {
   var record = new ChimaRecord({
     content: text,
     issueNo: issueNo,
+    removed: false,
     salt: salt,
     secret: sha256(salt + token)
   });
