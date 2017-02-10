@@ -1,5 +1,5 @@
 'use strict';
-const date = require('date');
+const date = require('./date');
 
 const skygear = require('skygear');
 const skygearCloud = require('skygear/cloud');
