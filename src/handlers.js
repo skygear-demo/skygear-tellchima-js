@@ -133,7 +133,8 @@ function listChima(responseURL) {
 
   const ChimaRecord = skygear.Record.extend('chima_record');
   const query = new skygear.Query(ChimaRecord);
-  query.greaterThan('_created_at', Date.yesterday).equalTo('removed', false).addAscending('issueNo');
+  // query.greaterThan('_created_at', Date.yesterday).equalTo('removed', false).addAscending('issueNo');
+  query.equalTo('removed', false).addAscending('issueNo');
 
   let container = getContainer(botConfig.defaultUserId);
 
