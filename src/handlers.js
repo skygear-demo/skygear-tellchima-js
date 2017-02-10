@@ -1,4 +1,5 @@
 'use strict';
+const date = require('date');
 
 const skygear = require('skygear');
 const skygearCloud = require('skygear/cloud');
@@ -63,7 +64,7 @@ function cancelIssue(issueNo, proposedToken) {
   }
 }
 
-function scheduleIssue(text, date) {
+function scheduleIssue(text, scheduledDate) {
 
 }
 
@@ -132,7 +133,7 @@ function listChima(responseURL) {
 
   const ChimaRecord = skygear.Record.extend('chima_record');
   const query = new skygear.Query(ChimaRecord);
-  query.greaterThan('_created_at', 10).notEqualTo('removed', true).addAscending('issueNo');
+  query.greaterThan('_created_at', Date.yesterday).equalTo('removed', false).addAscending('issueNo');
 
   let container = getContainer(botConfig.defaultUserId);
 
@@ -143,7 +144,7 @@ function listChima(responseURL) {
   }, (error) => {
     console.log(error);
     let responseWebhook = webhookOrNull(responseURL);
-    responseWebhook.send({text: "error."});
+    responseWebhook.send({text: 'error.'});
   });
 }
 
