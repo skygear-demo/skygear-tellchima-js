@@ -176,11 +176,13 @@ function listChima(responseURL) {
     console.log('in listChima');
   }
   var replyText = 'Chima Summary (`/tellchima` to add)';
+  var now = new Date();
+  var oneDayAgo = now.minus(24 * 60 * 60);
 
   const ChimaRecord = skygear.Record.extend('chima_record');
   const query = new skygear.Query(ChimaRecord);
   query.equalTo('removed', false);
-  query.greaterThan('scheduledAt', Date.yesterday());
+  query.greaterThan('scheduledAt', oneDayAgo);
   query.addAscending('issueNo');
   query.overallCount = true;
 
