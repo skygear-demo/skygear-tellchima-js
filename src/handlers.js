@@ -42,26 +42,45 @@ function showHelp() {
 }
 
 function cancelIssue(issueNo, proposedToken) {
-  // TODO: Match Chima record
+  const ChimaRecord = skygear.Record.extend('chima_record');
+  const query = new skygear.Query(ChimaRecord);
+  query.equalTo('issueNo', issueNo);
 
-  var salt = 'Query from DB';
-  var secret = 'Query from DB';
+  let container = getContainer(botConfig.defaultUserId);
+  container.publicDB.query(query).then((records) => {
 
-  // Check if possible to be deleted
-  let proposedSecret = sha256(salt + proposedToken);
-  if (proposedSecret === secret) {
-    // TODO: Mark as deleted
+    var record = records[0];
+    console.log(record);
 
-    //set `removed` is true
+    var salt = record.salt;
+    var secret = record.secret;
 
+    // Check if possible to be deleted
+    let proposedSecret = sha256(salt + proposedToken);
+    if (proposedSecret === secret) {
+      // Mark as deleted
+      record.removed = true;
 
+      container.publicDB.save(record).then((result) => {
+        let savedRecord = result;
+        let responseWebhook = webhookOrNull(responseURL);
+        responseWebhook.send({text: 'untellchima succefully'});
+      }, (error) => {
+        console.error(error);
+        responseWebhook.send({text: 'Failed to untell chima.'});
+      });
+
+    } else {
+      // No, you can't remove this post.
+      let responseWebhook = webhookOrNull(responseURL);
+      responseWebhook.send({text: 'untellchima failed.'});
+    }
+
+  }, (error) => {
+    console.log(error);
     let responseWebhook = webhookOrNull(responseURL);
-    responseWebhook.send({text: 'untellchima'});
-  } else {
-    // No, you can't remove this post.
-    let responseWebhook = webhookOrNull(responseURL);
-    responseWebhook.send({text: 'untellchima failed.'});
-  }
+    responseWebhook.send({text: 'error.'});
+  });
 }
 
 function scheduleIssue(text, scheduledDate) {
@@ -132,6 +151,8 @@ function untellChima(text, responseURL) {
     cancelIssue(issueNo, proposedToken);
 
   } else {
+    let responseWebhook = webhookOrNull(responseURL);
+    responseWebhook.send({text: 'Ooops. Issue not specified.'});
     console.log('Error. Issue not specified');
   }
 }
@@ -147,11 +168,23 @@ function listChima(responseURL) {
   query.equalTo('removed', false);
   query.greaterThan('scheduledAt', Date.yesterday());
   query.addAscending('issueNo');
+  query.overallCount = true;
 
   let container = getContainer(botConfig.defaultUserId);
 
   container.publicDB.query(query).then((records) => {
+    var count = records.overallCount;
     console.log(records[0]);
+
+    for (var i = 0; i < count; i++) {
+      var record = records[i];
+      replyText += '\n`#' + record.issueNo + '` ' + record.content;
+    }
+
+    if (count === 0) {
+      replyText += '\n No News.';
+    }
+
     let responseWebhook = webhookOrNull(responseURL);
     responseWebhook.send({text: replyText});
   }, (error) => {
