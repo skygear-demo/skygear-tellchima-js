@@ -7,8 +7,8 @@ const botConfig = {
   appName: process.env.APP_NAME || '_',
   channelOverride: process.env.CHANNEL_OVERRIDE || '',
   defaultUserId: process.env.DEFAULT_USER_ID || 'admin',
-  postSchedule: process.env.POST_SCHEDULE || '0 0 12 * * 1,2,3,4,5',
-  headsupSchedule: process.env.NOTIFY_SCHEDULE || '0 0 12 * * 1,2,3,4,5'
+  postSchedule: process.env.POST_SCHEDULE || '0 16 * * * *',
+  headsupSchedule: process.env.NOTIFY_SCHEDULE || '0 17 * * * *'
 };
 
 module.exports = {
