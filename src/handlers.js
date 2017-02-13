@@ -57,6 +57,15 @@ function cancelIssue(issueNo, proposedToken) {
 
     // Check if possible to be deleted
     let proposedSecret = sha256(salt + proposedToken);
+
+
+    if (botConfig.debugMode) {
+      console.log('in cancelIssue');
+      console.log('salt: ' + salt);
+      console.log('secret: '+ secret);
+      console.log('proposedSecret: ' + proposedSecret);
+    }
+
     if (proposedSecret === secret) {
       // Mark as deleted
       record.removed = true;
@@ -64,21 +73,26 @@ function cancelIssue(issueNo, proposedToken) {
       container.publicDB.save(record).then((result) => {
         let savedRecord = result;
         let responseWebhook = webhookOrNull(responseURL);
+
+        console.log('untellchima succefully');
         responseWebhook.send({text: 'untellchima succefully'});
       }, (error) => {
         console.error(error);
+        console.log('Failed to untell chima.');
         responseWebhook.send({text: 'Failed to untell chima.'});
       });
 
     } else {
       // No, you can't remove this post.
       let responseWebhook = webhookOrNull(responseURL);
+      console.log('untellchima failed.');
       responseWebhook.send({text: 'untellchima failed.'});
     }
 
   }, (error) => {
     console.log(error);
     let responseWebhook = webhookOrNull(responseURL);
+    console.log('error');
     responseWebhook.send({text: 'error.'});
   });
 }
