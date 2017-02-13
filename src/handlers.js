@@ -91,7 +91,7 @@ function tellChima(text, responseURL) {
     issueNo: issueNo,
     removed: false,
     salt: salt,
-    schedule_at: new Date(),
+    scheduledAt: new Date(),
     secret: sha256(salt + token)
   });
 
@@ -126,8 +126,8 @@ function untellChima(text, responseURL) {
 
     var proposedToken = matchesArray[2];
 
-    console.log('issue:'+ issueNo );
-    console.log('proposedToken:'+ proposedToken );
+    console.log('issue:' + issueNo);
+    console.log('proposedToken:' + proposedToken);
 
     cancelIssue(issueNo, proposedToken);
 
@@ -145,7 +145,7 @@ function listChima(responseURL) {
   const ChimaRecord = skygear.Record.extend('chima_record');
   const query = new skygear.Query(ChimaRecord);
   query.equalTo('removed', false);
-  query.greaterThan('schedule_at', Date.yesterday());
+  query.greaterThan('scheduledAt', Date.yesterday());
   query.addAscending('issueNo');
 
   let container = getContainer(botConfig.defaultUserId);
