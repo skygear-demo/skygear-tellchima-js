@@ -10,13 +10,22 @@ const { getContainer,
         generateChimaSalt } = require('./util');
 const { botConfig } = require('./config');
 
-/* Jobs */
+/* Function Helpers */
+
 function webhookOrNull(slackUrl) {
   if (slackUrl === undefined || slackUrl === null || slackUrl === '') {
     return null;
   }
   return new IncomingWebhook(slackUrl);
 }
+
+
+function postSummary() {
+  let container = getContainer(botConfig.defaultUserId);
+  var slackWebhookURL = botConfig.slackIncomingWebhook;
+}
+
+/* Jobs */
 
 /**
  * Create a summary notification schedule interval.
@@ -25,19 +34,13 @@ skygearCloud.every(botConfig.postSchedule, function () {
   if (botConfig.debugMode) {
     console.log('in summary schedule cronjob');
   }
-
-  // Since this cloud code is triggered with cron job, we use
-  // the default user as the user to make query and save records.
-  let container = getContainer(botConfig.defaultUserId);
-  var slackWebhookURL = botConfig.slackIncomingWebhook;
-
+  postSummary();
 });
 
 /**
  * Create a headsup notification schedule interval.
  */
-//skygearCloud.every(botConfig.headsupSchedule, function () {
-skygearCloud.every('0 */5 * * * *', function () { // testing mode
+skygearCloud.every(botConfig.headsupSchedule, function () {
   if (botConfig.debugMode) {
     console.log('in headsup schedule cronjob');
   }

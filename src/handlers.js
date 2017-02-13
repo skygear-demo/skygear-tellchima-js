@@ -74,7 +74,7 @@ function cancelIssue(issueNo, proposedToken, responseURL) {
         let savedRecord = result;
         let responseWebhook = webhookOrNull(responseURL);
 
-        console.log('untellchima succefully');
+        console.log('Untell `' + record.issueNo + '` succefully');
         responseWebhook.send({text: 'untellchima succefully'});
       }, (error) => {
         console.error(error);
