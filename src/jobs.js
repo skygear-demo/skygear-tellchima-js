@@ -11,6 +11,12 @@ const { getContainer,
 const { botConfig } = require('./config');
 
 /* Jobs */
+function webhookOrNull(slackUrl) {
+  if (slackUrl === undefined || slackUrl === null || slackUrl === '') {
+    return null;
+  }
+  return new IncomingWebhook(slackUrl);
+}
 
 /**
  * Create a summary notification schedule interval.
