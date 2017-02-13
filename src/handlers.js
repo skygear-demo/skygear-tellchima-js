@@ -41,7 +41,7 @@ function showHelp() {
   };
 }
 
-function cancelIssue(issueNo, proposedToken) {
+function cancelIssue(issueNo, proposedToken, responseURL) {
   const ChimaRecord = skygear.Record.extend('chima_record');
   const query = new skygear.Query(ChimaRecord);
   query.equalTo('issueNo', issueNo);
@@ -162,7 +162,7 @@ function untellChima(text, responseURL) {
     console.log('issue:' + issueNo);
     console.log('proposedToken:' + proposedToken);
 
-    cancelIssue(issueNo, proposedToken);
+    cancelIssue(issueNo, proposedToken, responseURL);
 
   } else {
     let responseWebhook = webhookOrNull(responseURL);
