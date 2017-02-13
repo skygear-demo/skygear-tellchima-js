@@ -37,7 +37,7 @@ skygearCloud.every(botConfig.postSchedule, function () {
  * Create a headsup notification schedule interval.
  */
 //skygearCloud.every(botConfig.headsupSchedule, function () {
-skygearCloud.every('*/5 * * * *', function () { // testing mode
+skygearCloud.every('0 */5 * * * *', function () { // testing mode
   if (botConfig.debugMode) {
     console.log('in headsup schedule cronjob');
   }
