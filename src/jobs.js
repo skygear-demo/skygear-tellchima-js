@@ -59,8 +59,7 @@ function postSummary() {
 /**
  * Create a summary notification schedule interval.
  */
-// skygearCloud.every(botConfig.postSchedule, function () {
-skygearCloud.every('0 */2 * * * *', function () { // Test version
+ skygearCloud.every(botConfig.postSchedule, function () {
   if (botConfig.debugMode) {
     console.log('in summary schedule cronjob');
   }
