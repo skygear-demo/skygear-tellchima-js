@@ -91,6 +91,7 @@ function tellChima(text, responseURL) {
     issueNo: issueNo,
     removed: false,
     salt: salt,
+    schedule_at: new Date(),
     secret: sha256(salt + token)
   });
 
@@ -110,6 +111,9 @@ function tellChima(text, responseURL) {
 }
 
 function untellChima(text, responseURL) {
+  if (botConfig.debugMode) {
+    console.log('in untellChima');
+  }
   // Parse format
   let str = text;
   var regexp = /(#[0-9]+) (\S+)/gi;
@@ -121,6 +125,10 @@ function untellChima(text, responseURL) {
     var issueNo = parseInt(issueNumber.replace('#', ''));
 
     var proposedToken = matchesArray[2];
+
+    console.log('issue:'+ issueNo );
+    console.log('proposedToken:'+ proposedToken );
+
     cancelIssue(issueNo, proposedToken);
 
   } else {
@@ -129,12 +137,16 @@ function untellChima(text, responseURL) {
 }
 
 function listChima(responseURL) {
+  if (botConfig.debugMode) {
+    console.log('in listChima');
+  }
   var replyText = 'Chima Summary (`/tellchima` to add)';
 
   const ChimaRecord = skygear.Record.extend('chima_record');
   const query = new skygear.Query(ChimaRecord);
-  // query.greaterThan('_created_at', Date.yesterday).equalTo('removed', false).addAscending('issueNo');
-  query.equalTo('removed', false).addAscending('issueNo');
+  query.equalTo('removed', false);
+  query.greaterThan('schedule_at', Date.yesterday());
+  query.addAscending('issueNo');
 
   let container = getContainer(botConfig.defaultUserId);
 
