@@ -23,6 +23,35 @@ function webhookOrNull(slackUrl) {
 function postSummary() {
   let container = getContainer(botConfig.defaultUserId);
   var slackWebhookURL = botConfig.slackIncomingWebhook;
+
+  var replyText = 'Chima Summary (`/tellchima` to add)';
+
+  const ChimaRecord = skygear.Record.extend('chima_record');
+  const query = new skygear.Query(ChimaRecord);
+  query.equalTo('removed', false);
+  query.greaterThan('scheduledAt', Date.yesterday());
+  query.addAscending('issueNo');
+  query.overallCount = true;
+
+  container.publicDB.query(query).then((records) => {
+    var count = records.overallCount;
+    console.log(records[0]);
+
+    for (var i = 0; i < count; i++) {
+      var record = records[i];
+      replyText += '\n`#' + record.issueNo + '` ' + record.content;
+    }
+
+    if (count === 0) {
+      replyText += '\n No News.';
+    }
+
+    let responseWebhook = webhookOrNull(slackWebhookURL);
+    responseWebhook.send({text: replyText});
+  }, (error) => {
+    console.log(error);
+  });
+
 }
 
 /* Jobs */
@@ -30,7 +59,8 @@ function postSummary() {
 /**
  * Create a summary notification schedule interval.
  */
-skygearCloud.every(botConfig.postSchedule, function () {
+// skygearCloud.every(botConfig.postSchedule, function () {
+skygearCloud.every('0 3 * * * *', function () { // Test version
   if (botConfig.debugMode) {
     console.log('in summary schedule cronjob');
   }
@@ -46,6 +76,5 @@ skygearCloud.every(botConfig.headsupSchedule, function () {
   }
   var slackWebhookURL = botConfig.slackIncomingWebhook;
   let responseWebhook = webhookOrNull(slackWebhookURL);
-  
   responseWebhook.send({text: 'If you have something to post, please `/tellchima`. Publish daily at 5pm.'});
 });
