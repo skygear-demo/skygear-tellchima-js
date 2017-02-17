@@ -22,25 +22,6 @@ function webhookOrNull(slackUrl) {
   return new IncomingWebhook(slackUrl);
 }
 
-/**
- * Show help.
- */
-function showHelp() {
-  if (botConfig.debugMode) {
-    console.log('in showHelp');
-  }
-  const commands = [
-    '/tellchima - tell chima',
-    '/untellchima - untell chima',
-    '/schedulechima - schedule a chima post',
-    '/tellskygear - tellchima skygear version',
-    '/untellskygear - untell a skygear post'
-  ];
-  return {
-    text: commands.join('\n')
-  };
-}
-
 function cancelIssue(issueNo, proposedToken, responseURL) {
   const ChimaRecord = skygear.Record.extend('chima_record');
   const query = new skygear.Query(ChimaRecord);
@@ -62,7 +43,7 @@ function cancelIssue(issueNo, proposedToken, responseURL) {
     if (botConfig.debugMode) {
       console.log('in cancelIssue');
       console.log('salt: ' + salt);
-      console.log('secret: '+ secret);
+      console.log('secret: ' + secret);
       console.log('proposedSecret: ' + proposedSecret);
     }
 
@@ -171,6 +152,10 @@ function untellChima(text, responseURL) {
   }
 }
 
+function scheduleChima(text, responseURL) {
+
+}
+
 function listChima(responseURL) {
   if (botConfig.debugMode) {
     console.log('in listChima');
@@ -215,17 +200,17 @@ function handleCommand(command, text, responseURL) {
     console.log('in handleCommand');
   }
 
-  if (command === '/tellchima' || command === '/2tellchima') {
+  if (command === '/tellchima') {
     tellChima(text, responseURL);
-  } else if (command === '/untellchima' || command === '/2untellchima') {
+  } else if (command === '/untellchima') {
     untellChima(text, responseURL);
-  } else if (command === '/schedulechima' || command === '/2schedulechima') {
+  } else if (command === '/schedulechima') {
     console.log('schedulechima');
   } else if (command === '/tellskygear') {
     console.log('tellskygear');
   } else if (command === '/untellskygear') {
     console.log('untellskygear');
-  } else if (command === '/listchima' || command === '/2listchima') {
+  } else if (command === '/listchima') {
     console.log('listchima');
     listChima(responseURL);
   } else {
