@@ -46,8 +46,20 @@ function createUser(userName) {
     });
 }
 
+/**
+ * Returns a slack IncomingWebhook. Return null if the slack URL is not valid.
+ */
+function webhookOrNull(slackUrl) {
+  if (slackUrl === undefined || slackUrl === null || slackUrl === '') {
+    return null;
+  }
+  return new IncomingWebhook(slackUrl);
+}
+
+
 module.exports = {
   getContainer,
   generateChimaSecret,
-  generateChimaSalt
+  generateChimaSalt,
+  webhookOrNull
 };

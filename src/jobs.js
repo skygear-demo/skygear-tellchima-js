@@ -7,18 +7,11 @@ const { IncomingWebhook } = require('@slack/client');
 
 const { getContainer,
         generateChimaSecret,
-        generateChimaSalt } = require('./util');
+        generateChimaSalt,
+        webhookOrNull } = require('./util');
 const { botConfig } = require('./config');
 
 /* Function Helpers */
-
-function webhookOrNull(slackUrl) {
-  if (slackUrl === undefined || slackUrl === null || slackUrl === '') {
-    return null;
-  }
-  return new IncomingWebhook(slackUrl);
-}
-
 function postSummary() {
   let container = getContainer(botConfig.defaultUserId);
   var slackWebhookURL = botConfig.slackIncomingWebhook;

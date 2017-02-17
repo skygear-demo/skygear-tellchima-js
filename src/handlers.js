@@ -9,18 +9,9 @@ const { IncomingWebhook } = require('@slack/client');
 
 const { getContainer,
         generateChimaSecret,
-        generateChimaSalt } = require('./util');
+        generateChimaSalt,
+        webhookOrNull } = require('./util');
 const { botConfig } = require('./config');
-
-/**
- * Returns a slack IncomingWebhook. Return null if the slack URL is not valid.
- */
-function webhookOrNull(slackUrl) {
-  if (slackUrl === undefined || slackUrl === null || slackUrl === '') {
-    return null;
-  }
-  return new IncomingWebhook(slackUrl);
-}
 
 function cancelIssue(issueNo, proposedToken, responseURL) {
   const ChimaRecord = skygear.Record.extend('chima_record');
