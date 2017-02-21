@@ -1,3 +1,4 @@
+/* handyDate JS Plugin by @david90 */
 
 // Date plugin
 (function () {

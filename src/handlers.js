@@ -144,7 +144,9 @@ function untellChima(text, responseURL) {
 }
 
 function scheduleChima(text, responseURL) {
+  // Parse the date
 
+  // call scheduleIssue
 }
 
 function listChima(responseURL) {
