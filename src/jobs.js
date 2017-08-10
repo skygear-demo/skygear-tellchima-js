@@ -16,8 +16,6 @@ function postSummary() {
   let container = getContainer(botConfig.defaultUserId);
   var slackWebhookURL = botConfig.slackIncomingWebhook;
 
-  var replyText = 'Chima Summary (`/tellchima` to add)';
-
   var now = new Date();
   var oneDayAgo = now.minus(24 * 60 * 60);
 
@@ -32,17 +30,22 @@ function postSummary() {
     var count = records.overallCount;
     console.log(records[0]);
 
-    for (var i = 0; i < count; i++) {
-      var record = records[i];
-      replyText += '\n`#' + record.issueNo + '` ' + record.content;
-    }
-
+    var replyText = 'Chima Summary (`/tellchima` to add)';
     if (count === 0) {
       replyText += '\n No News.';
     }
 
     let responseWebhook = webhookOrNull(slackWebhookURL);
     responseWebhook.send({text: replyText});
+
+    for (var i = 0; i < count; i++) {
+      var record = records[i];
+      replyText = '\n`#' + record.issueNo + '` ' + record.content;
+      setTimeout(function (replyText) {
+        responseWebhook.send(replyText)
+      }, 1000 * (i + 1), replyText)
+    }
+    
   }, (error) => {
     console.log(error);
   });
