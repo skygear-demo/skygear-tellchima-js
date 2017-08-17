@@ -3,8 +3,6 @@ const date = require('./date');
 const skygear = require('skygear');
 const skygearCloud = require('skygear/cloud');
 
-const { IncomingWebhook } = require('@slack/client');
-
 const { getContainer,
         generateChimaSecret,
         generateChimaSalt,

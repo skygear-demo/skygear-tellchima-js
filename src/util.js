@@ -1,5 +1,6 @@
 'use strict';
 
+const { IncomingWebhook } = require('@slack/client');
 const skygearCloud = require('skygear/cloud');
 
 function generateUserPassword() {
