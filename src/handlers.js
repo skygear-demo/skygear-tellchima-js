@@ -153,7 +153,6 @@ function listChima(responseURL) {
   if (botConfig.debugMode) {
     console.log('in listChima');
   }
-  var replyText = 'Chima Summary (`/tellchima` to add)';
   var now = new Date();
   var oneDayAgo = now.minus(24 * 60 * 60);
 
@@ -167,8 +166,11 @@ function listChima(responseURL) {
   let container = getContainer(botConfig.defaultUserId);
 
   container.publicDB.query(query).then((records) => {
+
+    let responseWebhook = webhookOrNull(responseURL);
+    var replyText = 'Chima Summary (`/tellchima` to add)';
+    responseWebhook.send({text: replyText});
     var count = records.overallCount;
-    console.log(records[0]);
 
     for (var i = 0; i < count; i++) {
       var record = records[i];
@@ -177,10 +179,16 @@ function listChima(responseURL) {
 
     if (count === 0) {
       replyText += '\n No News.';
+      responseWebhook.send({text: replyText});
     }
 
-    let responseWebhook = webhookOrNull(responseURL);
-    responseWebhook.send({text: replyText});
+    for (var i = 0; i < count; i++) {
+      var record = records[i];
+      replyText = '\n`#' + record.issueNo + '` ' + record.content;
+      setTimeout(function (replyText) {
+        responseWebhook.send({text: replyText});
+      }, 1000 * (i + 1), replyText)
+    }
   }, (error) => {
     console.log(error);
     let responseWebhook = webhookOrNull(responseURL);
