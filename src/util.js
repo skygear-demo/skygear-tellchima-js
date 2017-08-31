@@ -34,7 +34,7 @@ function getContainer(userId) {
 }
 
 function createUser(userName) {
-  return getContainer().signupWithUsername(userName, generateUserPassword())
+  return getContainer().auth.signupWithUsername(userName, generateUserPassword())
     .then((user) => {
       console.info(`Created user "${user.id}" for "${userName}".`);
       return {
