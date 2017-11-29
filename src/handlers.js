@@ -12,6 +12,7 @@ const { getContainer,
         generateChimaSalt,
         webhookOrNull } = require('./util');
 const { botConfig } = require('./config');
+const request = require('request');
 
 function cancelIssue(issueNo, proposedToken, responseURL) {
   const ChimaRecord = skygear.Record.extend('chima_record');
@@ -178,8 +179,18 @@ function listChima(responseURL) {
     }
 
     if (count === 0) {
-      replyText += '\n No News.';
-      responseWebhook.send({text: replyText});
+
+      var hnURL = "https://news.ycombinator.com/item?id=";
+      var hnAPI = "https://hacker-news.firebaseio.com/v0/topstories.json";
+
+      request({url: hnAPI}, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+          var stories = JSON.parse(body);
+          topStory = stories[0];
+          replyText += '\n No News. But here\'s the top HN story: ' + hnURL + topStory;
+          responseWebhook.send({text: replyText});
+        }
+      });
     }
 
     for (var i = 0; i < count; i++) {
