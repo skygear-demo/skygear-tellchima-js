@@ -179,7 +179,7 @@ function listChima(responseURL) {
     }
 
     if (count === 0) {
-
+      // Show a HN Story
       var hnURL = "https://news.ycombinator.com/item?id=";
       var hnAPI = "https://hacker-news.firebaseio.com/v0/topstories.json";
 

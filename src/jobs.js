@@ -2,6 +2,7 @@
 const date = require('./date');
 const skygear = require('skygear');
 const skygearCloud = require('skygear/cloud');
+const request = require('request');
 
 const { getContainer,
         generateChimaSecret,
@@ -30,7 +31,18 @@ function postSummary() {
 
     var replyText = 'Chima Summary (`/tellchima` to add)';
     if (count === 0) {
-      replyText += '\n No News.';
+      // Show a HN Story
+      var hnURL = "https://news.ycombinator.com/item?id=";
+      var hnAPI = "https://hacker-news.firebaseio.com/v0/topstories.json";
+
+      request({url: hnAPI}, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+          var stories = JSON.parse(body);
+          var topStory = stories[0];
+          replyText += '\n No News. But here\'s the top HN story: ' + hnURL + topStory;
+          responseWebhook.send({text: replyText});
+        }
+      });
     }
 
     let responseWebhook = webhookOrNull(slackWebhookURL);
