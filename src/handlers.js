@@ -186,7 +186,7 @@ function listChima(responseURL) {
       request({url: hnAPI}, function (error, response, body) {
         if (!error && response.statusCode == 200) {
           var stories = JSON.parse(body);
-          topStory = stories[0];
+          var topStory = stories[0];
           replyText += '\n No News. But here\'s the top HN story: ' + hnURL + topStory;
           responseWebhook.send({text: replyText});
         }
