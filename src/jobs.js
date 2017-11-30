@@ -39,8 +39,8 @@ function postSummary() {
         if (!error && response.statusCode == 200) {
           var stories = JSON.parse(body);
           var topStory = stories[0];
-          replyText += '\n No News. But here\'s the top HN story: ' + hnURL + topStory;
-          responseWebhook.send({text: replyText});
+          var emptyText = '\n No News. But here\'s the top HN story: ' + hnURL + topStory;
+          responseWebhook.send({text: emptyText});
         }
       });
     }
