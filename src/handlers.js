@@ -207,6 +207,45 @@ function listChima(responseURL) {
   });
 }
 
+function list9up(responseURL) {
+  let container = getContainer(botConfig.defaultUserId);
+
+  var now = new Date();
+  var oneDayAgo = now.minus(24 * 60 * 60);
+
+  const ChimaRecord = skygear.Record.extend('chima_record');
+  const query = new skygear.Query(ChimaRecord);
+  query.equalTo('removed', false);
+  query.greaterThan('scheduledAt', oneDayAgo);
+  query.addAscending('issueNo');
+  query.overallCount = true;
+
+  container.publicDB.query(query).then((records) => {
+    var count = records.overallCount;
+    console.log(records[0]);
+
+    var replyText = 'Chima Summary (`/tellchima` to add)';
+    if (count === 0) {
+      var emptyText = 'No one tell chima today.';
+      responseWebhook.send({text: emptyText});
+    }
+
+    let responseWebhook = webhookOrNull(responseURL);
+    responseWebhook.send({text: replyText});
+
+    for (var i = 0; i < count; i++) {
+      var record = records[i];
+      replyText = '\n`#' + record.issueNo + '` ' + record.content;
+      setTimeout(function (replyText) {
+        responseWebhook.send(replyText)
+      }, 1000 * (i + 1), replyText)
+    }
+    
+  }, (error) => {
+    console.log(error);
+  });
+}
+
 function handleCommand(command, text, responseURL) {
   if (botConfig.debugMode) {
     console.log('in handleCommand');
@@ -225,6 +264,9 @@ function handleCommand(command, text, responseURL) {
   } else if (command === '/listchima') {
     console.log('listchima');
     listChima(responseURL);
+  } else if (command === '/list9up') {
+    console.log('list9up');
+    list9up(responseURL);
   } else {
     console.log('No such command');
     return {text: 'No such command'};

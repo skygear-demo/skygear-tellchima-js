@@ -59,7 +59,46 @@ function postSummary() {
   }, (error) => {
     console.log(error);
   });
+}
 
+function post9up() {
+  let container = getContainer(botConfig.defaultUserId);
+  var slackWebhookURL = botConfig.slackIncomingWebhook;
+
+  var now = new Date();
+  var oneDayAgo = now.minus(24 * 60 * 60);
+
+  const ChimaRecord = skygear.Record.extend('chima_record');
+  const query = new skygear.Query(ChimaRecord);
+  query.equalTo('removed', false);
+  query.greaterThan('scheduledAt', oneDayAgo);
+  query.addAscending('issueNo');
+  query.overallCount = true;
+
+  container.publicDB.query(query).then((records) => {
+    var count = records.overallCount;
+    console.log(records[0]);
+
+    var replyText = 'Chima Summary (`/tellchima` to add)';
+    if (count === 0) {
+      var emptyText = 'No one tell chima today.';
+      responseWebhook.send({text: emptyText});
+    }
+
+    let responseWebhook = webhookOrNull(slackWebhookURL);
+    responseWebhook.send({text: replyText});
+
+    for (var i = 0; i < count; i++) {
+      var record = records[i];
+      replyText = '\n`#' + record.issueNo + '` ' + record.content;
+      setTimeout(function (replyText) {
+        responseWebhook.send(replyText)
+      }, 1000 * (i + 1), replyText)
+    }
+    
+  }, (error) => {
+    console.log(error);
+  });
 }
 
 /* Jobs */
