@@ -3,6 +3,7 @@
 const botConfig = {
   slackSlashCommandToken: process.env.SLACK_SLASH_COMMAND_TOKEN,
   slackIncomingWebhook: process.env.SLACK_INCOMING_WEBHOOK,
+  slack9upWebhook: process.env.SLACK_9UP_WEBHOOK,
   debugMode: process.env.DEBUG_MODE === 'true',
   appName: process.env.APP_NAME || '_',
   channelOverride: process.env.CHANNEL_OVERRIDE || '',

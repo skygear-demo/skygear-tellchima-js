@@ -63,7 +63,11 @@ function postSummary() {
 
 function post9up() {
   let container = getContainer(botConfig.defaultUserId);
-  var slackWebhookURL = botConfig.slackIncomingWebhook;
+  var slack9upWebhookURL = botConfig.slack9upWebhook;
+
+  if (!slack9upWebhookURL) {
+    return;
+  }
 
   var now = new Date();
   var oneDayAgo = now.minus(24 * 60 * 60);
@@ -79,22 +83,54 @@ function post9up() {
     var count = records.overallCount;
     console.log(records[0]);
 
-    var replyText = 'Chima Summary (`/tellchima` to add)';
+    var replyText = '*9up by 9up Chima*';
     if (count === 0) {
       var emptyText = 'No one tell chima today.';
       responseWebhook.send({text: emptyText});
     }
 
-    let responseWebhook = webhookOrNull(slackWebhookURL);
+    let responseWebhook = webhookOrNull(slack9upWebhookURL);
     responseWebhook.send({text: replyText});
 
-    for (var i = 0; i < count; i++) {
-      var record = records[i];
-      replyText = '\n`#' + record.issueNo + '` ' + record.content;
-      setTimeout(function (replyText) {
-        responseWebhook.send(replyText)
-      }, 1000 * (i + 1), replyText)
+    const promises = [];
+
+    // Prepare 9up replies
+    for (var i = 0; i < count; i++) { 
+      let task = new Promise(resolve => {
+
+        let record = records[i];
+
+        let requestBody = `{"message": "${record.content}"}`
+        var options = { method: 'POST',
+          url: cantoneseBotURL,
+          headers: { 'Cache-Control': 'no-cache' },
+          body: requestBody };
+
+        request(options, function (error, response, body) {
+          if (error) throw new Error(error);
+
+          let responseBody = JSON.parse(response.body);
+          let reply = responseBody.reply;
+
+          record.botReply = reply;
+          resolve(reply);
+        });
+      })
+
+      promises.push(task);
     }
+
+    // Wait till all promises, send summary
+    Promise.all(promises)
+      .then(data => {
+        for (let i = 0; i < count; i++) {
+          let record = records[i];
+          replyText = '\n`#' + record.issueNo + '` ' + record.content + '\n>:moonchima: ' + record.botReply;
+          setTimeout(function (replyText) {
+            responseWebhook.send(replyText)
+          }, 1000 * (i + 1), replyText)
+        }
+      });
     
   }, (error) => {
     console.log(error);
@@ -111,6 +147,7 @@ skygearCloud.every(botConfig.postSchedule, function () {
     console.log('in summary schedule cronjob');
   }
   postSummary();
+  post9up()
 });
 
 /**
