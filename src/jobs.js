@@ -64,6 +64,7 @@ function postSummary() {
 function post9up() {
   let container = getContainer(botConfig.defaultUserId);
   var slack9upWebhookURL = botConfig.slack9upWebhook;
+  const cantoneseBotURL = 'https://cantonese-chatbot.pandawork.com/';
 
   if (!slack9upWebhookURL) {
     return;
