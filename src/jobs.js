@@ -112,8 +112,10 @@ function post9up() {
 
           let responseBody = JSON.parse(response.body);
           let reply = responseBody.reply;
+          let re = /@(\w+)\/(\w+)/gi; // Translate Telegram style icon to Slack style icon
+          let newReply = reply.replace(re, ':lihkg_$1_$2:');
 
-          record.botReply = reply;
+          record.botReply = newReply;
           resolve(reply);
         });
       })
