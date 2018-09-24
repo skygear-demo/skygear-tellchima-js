@@ -252,13 +252,12 @@ function list9up(responseURL) {
           if (error) throw new Error(error);
 
           let responseBody = JSON.parse(response.body);
-          let reply = responseBody.reply;
-
+          let reply = (typeof responseBody.reply == 'undefined') ? '' : responseBody.reply;
           let re = /@(\w+)\/(\w+)/gi; // Translate Telegram style icon to Slack style icon
           let newReply = reply.replace(re, ':lihkg_$1_$2:');
 
           record.botReply = newReply;
-          resolve(reply);
+          resolve(newReply);
         });
       })
 
