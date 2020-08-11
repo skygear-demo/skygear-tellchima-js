@@ -11,21 +11,51 @@ This is a Skygear JS Cloud Code demo of the following cloud code features:
 * Scheduled Tasks (remind the team to post at 4pm, send a summary at 5pm)
 * Calling Skygear API (saving and querying the message records)
 * Handler (implement Slack webhook request)
-* 
+*
 
 ## Requirements
 
-* Skygear (sign up an account at [Skygear.io](https://portal.skygear.io/))
+* ~~Skygear (sign up an account at [Skygear.io](https://portal.skygear.io/))~~
+* A namespace in k8s cluster
 * Slack Incoming Webhook
 * Slack Slash Command
 
 ## Setup
+
+### ~~SkygearIO~~
 
 1. Clone this repository
 2. Create a Skygear account at [skygear.io](https://portal.skygear.io)
 3. Push the repository to Skygear Cloud (see [doc](https://docs.skygear.io/) for details)
 4. Create Slack Incoming Webhook and Slack Slash Command
 5. Configure the bot using environment variables
+
+### Self host on k8s cluster
+
+```sh
+$ blackbox_decrypt_all_files
+
+# build (and push) docker image if needed
+$ make docker-build-plugin
+$ make docker-push-plugin
+
+# deploy the app
+$ cd deploy
+
+# update the variables for the deployment
+$ export ENV=xxx
+$ vim flavor/${ENV}/values.yaml # commit the change afterwards if needed
+
+# test if the values are correct
+$ export NAMESPACE=xxx
+$ make dry-install ENV=${ENV} NAMESPACE=${NAMESPACE}
+
+# deploy for the first time
+$ make install ENV=${ENV} NAMESPACE=${NAMESPACE}
+
+# deploy after the first time
+$ make upgrade ENV=${ENV} NAMESPACE=${NAMESPACE}
+```
 
 ## Configuration
 
