@@ -1,0 +1,3 @@
+[submodule "deploy/skygear-v1-deploy"]
+	path = deploy/skygear-v1-deploy
+	url = git@gitlab.com:oursky/skygear-v1-deploy.git
