@@ -1,4 +1,5 @@
 FROM node:12-buster
+WORKDIR /usr/src/app
 RUN npm install -g skygear@1.1.2
 # Install the dependencies of our app
 COPY package.json /usr/src/app/
