@@ -64,7 +64,9 @@ function postSummary() {
 function post9up() {
   let container = getContainer(botConfig.defaultUserId);
   var slack9upWebhookURL = botConfig.slack9upWebhook;
-  const cantoneseBotURL = 'https://cantonese-chatbot.pandawork.com/';
+  // const cantoneseBotURL = 'https://cantonese-chatbot.pandawork.com/';
+  // The node runtime is too old that the Let's encrypt CA cert is considered expired.
+  const cantoneseBotURL = 'http://chatbot-server.cantonese-chatbot.svc.cluster.local/';
 
   if (!slack9upWebhookURL) {
     return;
