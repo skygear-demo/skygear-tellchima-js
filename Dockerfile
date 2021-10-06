@@ -6,4 +6,5 @@ COPY package.json /usr/src/app/
 RUN npm install
 COPY index.js /usr/src/app/index.js
 COPY src /usr/src/app/src
+ENV NODE_OPTIONS=--use-openssl-ca
 CMD ["./node_modules/.bin/skygear-node", "index.js"]
