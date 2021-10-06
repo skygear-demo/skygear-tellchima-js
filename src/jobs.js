@@ -164,3 +164,8 @@ skygearCloud.every(botConfig.headsupSchedule, function () {
   let responseWebhook = webhookOrNull(slackWebhookURL);
   responseWebhook.send({text: 'If you have something to post, please `/tellchima`. Publish daily at 5pm.'});
 });
+
+module.exports = {
+  postSummary,
+  post9up,
+};
